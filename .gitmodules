@@ -1,0 +1,3 @@
+[submodule "enhydris"]
+	path = enhydris
+	url = https://github.com/openmeteo/enhydris.git

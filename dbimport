@@ -1,0 +1,18 @@
+#!/bin/bash
+
+set -e
+
+tar xzf /dbdump/dbdump.tar.gz -C /tmp
+
+mkdir -p /var/opt/enhydris/timeseries_data
+rm -f /var/opt/enhydris/timeseries_data/*
+mv /tmp/000000???? /var/opt/enhydris/timeseries_data
+
+su postgres -c \
+    "psql --command \"CREATE USER openmeteo WITH SUPERUSER PASSWORD 'topsecret';\"" || true
+su postgres -c "dropdb openmeteo" || true
+su postgres -c "createdb -O openmeteo openmeteo"
+su postgres -c 'psql -d openmeteo --command "CREATE EXTENSION IF NOT EXISTS postgis;"'
+su postgres -c 'psql -d openmeteo --command "\i /tmp/openmeteo.dump"'
+
+rm /tmp/openmeteo.dump
