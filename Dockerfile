@@ -6,17 +6,29 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get update && apt-get -y upgrade && apt-get install -y locales && apt-get clean
+RUN apt-get update && apt-get -y upgrade \
+    && apt-get install -y locales ca-certificates wget gnupg && apt-get clean
 RUN sed -i 's/^# en_US.UTF-8 /en_US.UTF-8 /' /etc/locale.gen && locale-gen
 ENV LC_CTYPE=en_US.UTF-8
+
+RUN echo "deb https://packagecloud.io/timescale/timescaledb/debian buster main" \
+    >/etc/apt/sources.list.d/timescaledb.list \
+    && wget --quiet -O - https://packagecloud.io/timescale/timescaledb/gpgkey \
+        | apt-key add - \
+    && apt-get update
 
 RUN apt-get install -y --no-install-recommends \
         git wget build-essential dos2unix less nano vim \
         virtualenv python3-virtualenv python3-pip \
         postgresql-postgis postgresql-postgis-scripts \
+        timescaledb-postgresql-11 \
         python3-psycopg2 python3-gdal python3-pandas \
         python3-dev libjpeg-dev libfreetype6-dev \
     && apt-get clean
+
+RUN echo "shared_preload_libraries = 'timescaledb'" \
+    >>/etc/postgresql/11/main/postgresql.conf
+
 WORKDIR /home/foo/
 
 RUN virtualenv --python=/usr/bin/python3 --system-site-packages /home/foo/venv
