@@ -1,0 +1,8 @@
+#!/bin/bash
+
+set -e
+find /opt/enhydris* -prune -name '*.py' -o -type d | xargs black --check --diff
+find /opt/enhydris* -prune -name '*.py' -o -type d | xargs flake8 --max-line-length=88
+find /opt/enhydris* -prune -name '*.py' -o -type d | xargs isort --recursive --check-only --diff
+./manage.py makemigrations --check
+./manage.py test enhydris enhydris_openhigis enhydris_synoptic enhydris_autoprocess --failfast

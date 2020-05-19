@@ -23,6 +23,9 @@ get_apt_proxy_line() {
 if [ ! -e enhydris/enhydris_project/settings/local.py ]; then
     cp local.py enhydris/enhydris_project/settings/
 fi
+if [ ! -e enhydris/enhydris_project/settings/urls.py ]; then
+    cp urls.py enhydris/enhydris_project/settings/
+fi
 docker build \
     -t enhydris-dev \
     --build-arg apt_proxy_line="`get_apt_proxy_line`" \
