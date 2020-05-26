@@ -1,9 +1,9 @@
 [submodule "enhydris"]
 	path = enhydris
-	url = https://github.com/openmeteo/enhydris.git
+	url = git@github.com:openmeteo/enhydris
 [submodule "enhydris-openhigis"]
 	path = enhydris-openhigis
-	url = ./enhydris-openhigis/
+	url = git@github.com:openmeteo/enhydris-openhigis
 [submodule "enhydris-synoptic"]
 	path = enhydris-synoptic
 	url = git@github.com:openmeteo/enhydris-synoptic
