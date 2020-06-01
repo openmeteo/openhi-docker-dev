@@ -12,10 +12,12 @@ Prerequisites:
 
 3. Clone the Enhydris repositories:
 
-      git clone git@github.com:openmeteo/enhydris
-      git clone git@github.com:openmeteo/enhydris-synoptic
-      git clone git@github.com:openmeteo/enhydris-autoprocess
-      git clone git@github.com:openmeteo/enhydris-openhigis
+   ```
+   git clone git@github.com:openmeteo/enhydris
+   git clone git@github.com:openmeteo/enhydris-synoptic
+   git clone git@github.com:openmeteo/enhydris-autoprocess
+   git clone git@github.com:openmeteo/enhydris-openhigis
+   ```
 
 4. Get a database dump file named `dbdump.tar.gz` and put it in the
    `dbdump` directory.
