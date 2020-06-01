@@ -1,2 +1,6 @@
 dbdump/dbdump.tar.gz
 .vagrant/
+enhydris
+enhydris-autoprocess
+enhydris-synoptic
+enhydris-openhigis
