@@ -59,9 +59,7 @@ EXPOSE 8000
 # Copy shell scripts. If cloned on Windows, they might have CRLF line endings.
 # We make sure they have Unix-style line endings, otherwise they can't execute.
 ADD start.sh /home/foo
-ADD dbimport /usr/local/bin
-ADD runtests /usr/local/bin
-RUN dos2unix /home/foo/start.sh /usr/local/bin/dbimport /usr/local/bin/runtests
-RUN chmod +x /home/foo/start.sh /usr/local/bin/dbimport /usr/local/bin/runtests
+ADD bashrc /root/.bashrc
+RUN dos2unix /home/foo/start.sh /root/.bashrc
 
 CMD ["/home/foo/start.sh"]
