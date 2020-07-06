@@ -20,7 +20,9 @@ dbimport() {
 runtests() {
     find /opt/enhydris* -prune -name '*.py' -o -type d | xargs black --check --diff || return
     find /opt/enhydris* -prune -name '*.py' -o -type d | xargs flake8 --max-line-length=88 || return
-    find /opt/enhydris* -prune -name '*.py' -o -type d | xargs isort --recursive --check-only --diff || return
+    for dir in /opt/enhydris*; do
+        ( cd $dir && find . -prune -name '*.py' -o -type d | xargs isort --check-only --diff ) || return
+    done
     python /opt/enhydris/manage.py makemigrations --check || return
     python /opt/enhydris/manage.py test enhydris enhydris_openhigis enhydris_synoptic enhydris_autoprocess --failfast
 }
