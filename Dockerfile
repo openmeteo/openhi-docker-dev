@@ -24,7 +24,7 @@ RUN apt-get install -y --no-install-recommends \
         timescaledb-postgresql-11 rabbitmq-server \
         python3-psycopg2 python3-gdal python3-pandas \
         python3-dev libjpeg-dev libfreetype6-dev \
-        tmux \
+        tmux apache2 \
     && apt-get clean
 
 RUN echo "shared_preload_libraries = 'timescaledb'" \
@@ -50,6 +50,11 @@ RUN /home/foo/venv/bin/pip install --no-cache-dir -r requirements-enhydris-openh
 RUN /home/foo/venv/bin/pip install --no-cache-dir -r requirements-enhydris-synoptic-dev.txt
 RUN /home/foo/venv/bin/pip install --no-cache-dir -r requirements-enhydris-autoprocess-dev.txt
 RUN /home/foo/venv/bin/pip install --no-cache-dir isort flake8 black pdbpp
+
+COPY apache.conf /etc/apache2/sites-available/000-default.conf
+RUN echo "ServerName enhydris.local" >>/etc/apache2/apache2.conf
+RUN a2enmod proxy
+RUN a2enmod proxy_http
 
 RUN echo "host all  all    0.0.0.0/0  md5" >> /etc/postgresql/11/main/pg_hba.conf
 RUN echo "listen_addresses='*'" >> /etc/postgresql/11/main/postgresql.conf

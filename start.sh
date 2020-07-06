@@ -1,5 +1,6 @@
 #!/bin/bash
 
+service apache2 start
 service postgresql start
 service rabbitmq-server start
 cd /opt/enhydris
@@ -16,3 +17,4 @@ echo " - 'exit' to stop the container"
 bash
 service rabbitmq-server stop
 service postgresql stop
+service apache2 stop

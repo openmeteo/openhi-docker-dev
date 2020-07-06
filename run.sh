@@ -20,7 +20,7 @@ if docker_image_has_changed; then
         -v `pwd`/enhydris-openhigis:/opt/enhydris-openhigis \
         -v `pwd`/enhydris-synoptic:/opt/enhydris-synoptic \
         -v `pwd`/enhydris-autoprocess:/opt/enhydris-autoprocess \
-        -v `pwd`/dbdump:/dbdump -p 8001:8000 enhydris-dev
+        -v `pwd`/dbdump:/dbdump -p 8001:80 enhydris-dev
 else
     echo "Container already exists; starting it..."
     docker start -i enhydris-dev
