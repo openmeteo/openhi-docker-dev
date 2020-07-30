@@ -30,7 +30,7 @@ runtests() {
 runsynoptic() {
     python /opt/enhydris/manage.py shell -c 'from enhydris_synoptic.tasks import create_static_files; create_static_files()' || return
     echo "The files have been created in /tmp/enhydris-synoptic-root"
-    echo "and are accessible at http://localhost:8001/synoptic"
+    echo "and are accessible at http://localhost:8001/synoptic/"
 }
 
 runserver() {
