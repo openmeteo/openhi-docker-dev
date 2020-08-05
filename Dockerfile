@@ -17,22 +17,41 @@ RUN echo "deb https://packagecloud.io/timescale/timescaledb/debian buster main" 
         | apt-key add - \
     && apt-get update
 
+RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
+RUN sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list' \
+    && apt-get -y update
+
+RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
+RUN sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list' \
+    && apt-get -y update
+
+
 RUN apt-get install -y --no-install-recommends \
-        git wget build-essential dos2unix less nano vim \
+        git wget build-essential dos2unix less nano vim curl unzip \
         virtualenv python3-virtualenv python3-pip python3-ipython \
         postgresql-postgis postgresql-postgis-scripts \
         timescaledb-postgresql-11 rabbitmq-server \
         python3-psycopg2 python3-gdal python3-pandas \
         python3-dev libjpeg-dev libfreetype6-dev \
-        tmux apache2 \
+        tmux apache2 google-chrome-stable \ 
     && apt-get clean
+
+# install chromedriver
+RUN wget -O /tmp/chromedriver.zip http://chromedriver.storage.googleapis.com/`curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE`/chromedriver_linux64.zip
+RUN unzip /tmp/chromedriver.zip chromedriver -d /usr/local/bin/
+
+# set display port to avoid crash
+ENV DISPLAY=:99
+
 
 RUN echo "shared_preload_libraries = 'timescaledb'" \
     >>/etc/postgresql/11/main/postgresql.conf
 
 WORKDIR /home/foo/
 
-RUN virtualenv --python=/usr/bin/python3 --system-site-packages /home/foo/venv
+RUN virtualenv --python=/usr/bin/python3 --system-site-packages  /home/foo/venv
+RUN /home/foo/venv/bin/pip install --upgrade pip==19.2.2
+RUN /home/foo/venv/bin/pip install selenium
 COPY enhydris/requirements.txt requirements-enhydris.txt
 COPY enhydris/requirements-dev.txt requirements-enhydris-dev.txt
 COPY enhydris-openhigis/requirements.txt requirements-enhydris-openhigis.txt
