@@ -1,6 +1,9 @@
 # flake8: NOQA
 from celery.schedules import crontab
 
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options as ChromeOptions
+
 from . import *
 
 DEBUG = True
@@ -36,3 +39,16 @@ CELERYBEAT_SCHEDULE = {
 }
 
 INSTALLED_APPS.append("enhydris_autoprocess")
+
+headless = ChromeOptions()
+headless.add_argument("--headless")
+headless.add_argument("--disable-gpu")
+headless.add_argument("--no-sandbox")
+headless.add_argument("--disable-dev-shm-usage")
+SELENIUM_WEBDRIVERS = {
+    "headless": {
+        "callable": webdriver.Chrome,
+        "args": [],
+        "kwargs": {"options": headless},
+    },
+}
