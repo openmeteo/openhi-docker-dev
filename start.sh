@@ -4,8 +4,6 @@ service apache2 start
 service postgresql start
 service rabbitmq-server start
 cd /opt/enhydris
-export PATH=/home/foo/venv/bin:$PATH
-export PYTHONPATH=/opt/enhydris-openhigis:/opt/enhydris-synoptic:/opt/enhydris-autoprocess
 echo "Container is running"
 echo "Enter:"
 echo " - 'dbimport' to discard any existing database and import it from dbdump.tar.gz"
