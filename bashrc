@@ -2,22 +2,52 @@ export PATH=/home/foo/venv/bin:$PATH
 export PYTHONPATH=/opt/enhydris-openhigis:/opt/enhydris-synoptic:/opt/enhydris-autoprocess
 
 dbimport() {
-    tar xzf /dbdump/dbdump.tar.gz -C /tmp || return
-
-    mkdir -p /var/opt/enhydris/timeseries_data
-    rm -f /var/opt/enhydris/timeseries_data/*
-    mv /tmp/000000???? /var/opt/enhydris/timeseries_data
-
-    for user in openmeteo anton mapserver; do
-        sql="psql --command \"CREATE USER $user WITH SUPERUSER PASSWORD 'topsecret';\""
-        su postgres -c "$sql" || true
-    done
-    su postgres -c "dropdb openmeteo" || true
-    su postgres -c "createdb -O openmeteo openmeteo"
-    su postgres -c 'psql -d openmeteo --command "CREATE EXTENSION IF NOT EXISTS postgis;"'
-    su postgres -c 'psql -d openmeteo --command "\i /tmp/openmeteo.dump"'
-
-    rm /tmp/openmeteo.dump
+	tar xzf /dbdump/dbdump.tar.gz -C /tmp || return;
+	cd /tmp
+	for user in openmeteo anton mapserver;
+	do
+		sql="psql --command \"CREATE USER $user WITH SUPERUSER PASSWORD 'topsecret'\""
+		su postgres -c "$sql" || true
+	done;
+	su postgres -c "dropdb openmeteo" || true
+	su postgres -c "createdb -O openmeteo openmeteo"
+	su postgres -c 'psql -d openmeteo' <<- EOF1
+		CREATE EXTENSION IF NOT EXISTS postgis;
+		CREATE EXTENSION IF NOT EXISTS timescaledb;
+		SELECT timescaledb_pre_restore();
+	EOF1
+	su postgres -c 'pg_restore -d openmeteo /tmp/openmeteo.dump';
+	su postgres -c 'psql -d openmeteo' <<- EOF1
+		SELECT timescaledb_post_restore();
+		CREATE TABLE enhydris_timeseriesrecord (
+		    timeseries_id INTEGER NOT NULL,
+		    "timestamp" TIMESTAMP WITH TIME ZONE NOT NULL,
+		    value DOUBLE PRECISION NULL,
+		    flags VARCHAR(237) NOT NULL
+		);
+		SELECT create_hypertable(
+		    'enhydris_timeseriesrecord',
+		    'timestamp',
+		    chunk_time_interval => interval '1 year'
+		);
+		COPY enhydris_timeseriesrecord
+			FROM '/tmp/openmeteo-timeseries-records.csv' CSV;
+		ALTER TABLE enhydris_timeseriesrecord
+			ADD CONSTRAINT enhydris_timeseriesrecord_pk
+			PRIMARY KEY(timeseries_id, "timestamp");
+		ALTER TABLE enhydris_timeseriesrecord
+			ADD CONSTRAINT enhydris_timeseriesrecord_timeseries_fk
+				FOREIGN KEY (timeseries_id)
+				REFERENCES enhydris_timeseries(id)
+				DEFERRABLE INITIALLY DEFERRED;
+		CREATE INDEX enhydris_timeseriesrecord_timeseries_id_idx
+			ON enhydris_timeseriesrecord(timeseries_id);
+		CREATE INDEX enhydris_timeseriesrecord_timestamp_timeseries_id_idx
+		ON enhydris_timeseriesrecord("timestamp", timeseries_id);
+	EOF1
+	rm /tmp/openmeteo.dump \
+		/tmp/openmeteo-timeseries-records.csv \
+		/tmp/openmeteo-timeseriesrecord.sql
 }
 
 runtests() {
