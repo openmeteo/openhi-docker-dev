@@ -3,6 +3,8 @@
 service apache2 start
 service postgresql start
 service rabbitmq-server start
+( echo "Starting VNC server ..."; USER=root vncserver :1 -geometry 1280x800 -depth 24 ) &
+sleep 2
 cd /opt/enhydris
 echo "Container is running"
 echo "Enter:"

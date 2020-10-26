@@ -1,5 +1,6 @@
 export PATH=/home/foo/venv/bin:$PATH
 export PYTHONPATH=/opt/enhydris-openhigis:/opt/enhydris-synoptic:/opt/enhydris-autoprocess
+export DISPLAY=:1.0
 
 dbimport() {
 	tar xzf /dbdump/dbdump.tar.gz -C /tmp || return;

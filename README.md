@@ -2,9 +2,12 @@
 
 Ready-made Enhydris development environment
 
-Prerequisites:
- - On Windows: VirtualBox
- - Linux: Docker
+## Prerequisites
+
+- On Windows: VirtualBox
+- Linux: Docker
+
+## Setting up
 
 1. Clone this repository: `git clone git@github.com:openmeteo/openhi-docker-dev`.
 
@@ -43,3 +46,22 @@ Prerequisites:
     server.
 
 11. In your browser, visit http://localhost:8001/.
+
+## Running the unit tests in a visible browser
+
+First, make sure that the `chrome_options` and `SELENIUM_WEBDRIVERS`
+settings in `enhydris/enhydris_project/settings/local.py` are as they
+are in `local.py` (in the root directory of `enhydris-docker-dev`). (The
+top-level `local.py` is copied to
+`enhydris/enhydris_project/settings/local.py` when the container is
+built, unless the latter file already exists.)
+
+By default, selenium tests are run headlessly. If you want to make them
+visible, then:
+
+1. In `enhydris/enhydris_project/settings/local.py`, comment out the
+   line `chrome_options.add_argument("--headless")`.
+2. Use a VNC client to connect to `localhost:5901`, using `topsecret` as
+   the password.
+
+Then, when you run the Selenium tests, they should be visible.

@@ -1,0 +1,2 @@
+export XKL_XMODMAP_DISABLE=1
+exec /usr/bin/startlxde

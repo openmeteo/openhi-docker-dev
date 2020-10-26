@@ -40,15 +40,15 @@ CELERYBEAT_SCHEDULE = {
 
 INSTALLED_APPS.append("enhydris_autoprocess")
 
-headless = ChromeOptions()
-headless.add_argument("--headless")
-headless.add_argument("--disable-gpu")
-headless.add_argument("--no-sandbox")
-headless.add_argument("--disable-dev-shm-usage")
+chrome_options = ChromeOptions()
+chrome_options.add_argument("--headless")
+chrome_options.add_argument("--disable-gpu")
+chrome_options.add_argument("--no-sandbox")
+chrome_options.add_argument("--disable-dev-shm-usage")
 SELENIUM_WEBDRIVERS = {
-    "headless": {
+    "default": {
         "callable": webdriver.Chrome,
         "args": [],
-        "kwargs": {"options": headless},
+        "kwargs": {"options": chrome_options},
     },
 }

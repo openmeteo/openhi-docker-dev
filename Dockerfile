@@ -21,11 +21,6 @@ RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key
 RUN sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list' \
     && apt-get -y update
 
-RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
-RUN sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list' \
-    && apt-get -y update
-
-
 RUN apt-get install -y --no-install-recommends \
         git wget build-essential dos2unix less nano vim curl unzip \
         virtualenv python3-virtualenv python3-pip python3-ipython \
@@ -34,18 +29,26 @@ RUN apt-get install -y --no-install-recommends \
         python3-psycopg2 python3-gdal python3-pandas \
         python3-dev libjpeg-dev libfreetype6-dev \
         tmux apache2 google-chrome-stable \ 
+        tightvncserver lxde xfonts-base xfonts-75dpi xfonts-100dpi \
     && apt-get clean
 
 # install chromedriver
 RUN wget -O /tmp/chromedriver.zip http://chromedriver.storage.googleapis.com/`curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE`/chromedriver_linux64.zip
 RUN unzip /tmp/chromedriver.zip chromedriver -d /usr/local/bin/
 
-# set display port to avoid crash
-ENV DISPLAY=:99
-
-
 RUN echo "shared_preload_libraries = 'timescaledb'" \
     >>/etc/postgresql/11/main/postgresql.conf
+
+WORKDIR /root/
+
+RUN mkdir -p /root/.vnc
+COPY xstartup /root/.vnc/
+RUN chmod a+x /root/.vnc/xstartup
+RUN touch /root/.vnc/passwd
+RUN /bin/bash -c "echo -e 'topsecret\ntopsecret\nn' | vncpasswd" > /root/.vnc/passwd
+RUN chmod 400 /root/.vnc/passwd
+RUN chmod go-rwx /root/.vnc
+RUN touch /root/.Xauthority
 
 WORKDIR /home/foo/
 
@@ -79,6 +82,12 @@ RUN echo "host all  all    0.0.0.0/0  md5" >> /etc/postgresql/11/main/pg_hba.con
 RUN echo "listen_addresses='*'" >> /etc/postgresql/11/main/postgresql.conf
 EXPOSE 5432
 EXPOSE 8000
+EXPOSE 5901
+ENV USER root
+
+RUN echo "mycontainer" > /etc/hostname
+RUN echo "127.0.0.1	localhost" > /etc/hosts
+RUN echo "127.0.0.1	mycontainer" >> /etc/hosts
 
 # Copy shell scripts. If cloned on Windows, they might have CRLF line endings.
 # We make sure they have Unix-style line endings, otherwise they can't execute.
