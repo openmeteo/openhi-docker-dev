@@ -3,7 +3,6 @@ export PYTHONPATH=/opt/enhydris-openhigis:/opt/enhydris-synoptic:/opt/enhydris-a
 
 dbimport() {
 	tar xzf /dbdump/dbdump.tar.gz -C /tmp || return;
-	cd /tmp
 	for user in openmeteo anton mapserver;
 	do
 		sql="psql --command \"CREATE USER $user WITH SUPERUSER PASSWORD 'topsecret'\""
@@ -13,12 +12,10 @@ dbimport() {
 	su postgres -c "createdb -O openmeteo openmeteo"
 	su postgres -c 'psql -d openmeteo' <<- EOF1
 		CREATE EXTENSION IF NOT EXISTS postgis;
-		CREATE EXTENSION IF NOT EXISTS timescaledb;
-		SELECT timescaledb_pre_restore();
+		CREATE EXTENSION IF NOT EXISTS timescaledb CASCADE;
 	EOF1
 	su postgres -c 'pg_restore -d openmeteo /tmp/openmeteo.dump';
 	su postgres -c 'psql -d openmeteo' <<- EOF1
-		SELECT timescaledb_post_restore();
 		CREATE TABLE enhydris_timeseriesrecord (
 		    timeseries_id INTEGER NOT NULL,
 		    "timestamp" TIMESTAMP WITH TIME ZONE NOT NULL,
@@ -45,9 +42,7 @@ dbimport() {
 		CREATE INDEX enhydris_timeseriesrecord_timestamp_timeseries_id_idx
 		ON enhydris_timeseriesrecord("timestamp", timeseries_id);
 	EOF1
-	rm /tmp/openmeteo.dump \
-		/tmp/openmeteo-timeseries-records.csv \
-		/tmp/openmeteo-timeseriesrecord.sql
+	rm /tmp/openmeteo.dump
 }
 
 runtests() {
