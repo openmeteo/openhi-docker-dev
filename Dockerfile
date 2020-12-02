@@ -28,7 +28,7 @@ RUN apt-get install -y --no-install-recommends \
         timescaledb-postgresql-11 rabbitmq-server \
         python3-psycopg2 python3-gdal python3-pandas \
         python3-dev libjpeg-dev libfreetype6-dev \
-        tmux apache2 google-chrome-stable \ 
+        tmux apache2 google-chrome-stable cgi-mapserver \
         tightvncserver lxde xfonts-base xfonts-75dpi xfonts-100dpi \
     && apt-get clean
 
@@ -77,6 +77,13 @@ COPY apache.conf /etc/apache2/sites-available/000-default.conf
 RUN echo "ServerName enhydris.local" >>/etc/apache2/apache2.conf
 RUN a2enmod proxy
 RUN a2enmod proxy_http
+
+# Mapserver
+RUN a2enmod headers
+RUN a2enmod cgid
+RUN mkdir /var/log/mapserver
+RUN chown www-data:www-data /var/log/mapserver
+RUN sed -i 's/^# IPv4 local connections/host openmeteo mapserver samehost trust\n&/' /etc/postgresql/11/main/pg_hba.conf
 
 RUN echo "host all  all    0.0.0.0/0  md5" >> /etc/postgresql/11/main/pg_hba.conf
 RUN echo "listen_addresses='*'" >> /etc/postgresql/11/main/postgresql.conf
