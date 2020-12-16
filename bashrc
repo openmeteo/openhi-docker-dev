@@ -3,7 +3,7 @@ export PYTHONPATH=/opt/enhydris-openhigis:/opt/enhydris-synoptic:/opt/enhydris-a
 export DISPLAY=:1.0
 
 dbimport() {
-	tar xzf /dbdump/dbdump.tar.gz -C /tmp || return;
+	tar xzf /shared/dbdump.tar.gz -C /tmp || return;
 	for user in openmeteo anton mapserver;
 	do
 		sql="psql --command \"CREATE USER $user WITH SUPERUSER PASSWORD 'topsecret'\""

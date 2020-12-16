@@ -23,7 +23,7 @@ Ready-made Enhydris development environment
    ```
 
 4. Get a database dump file named `dbdump.tar.gz` and put it in the
-   `dbdump` directory.
+   `shared` directory.
 
 5. (Windows/Vagrant only). `vagrant up`, then `vagrant ssh`.
 

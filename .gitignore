@@ -1,4 +1,5 @@
-dbdump/dbdump.tar.gz
+shared
+!shared/KEEP
 .vagrant/
 enhydris
 enhydris-autoprocess
