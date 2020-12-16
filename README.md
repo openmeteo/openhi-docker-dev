@@ -42,8 +42,7 @@ Ready-made Enhydris development environment
 9. `python manage.py migrate` will ensure the database is up-to-date (the
    database import file could be slightly out of date).
 
-10. In the container, `python manage.py runserver 0.0.0.0:8000` will start the
-    server.
+10. In the container, `runserver` will start the server.
 
 11. In your browser, visit http://localhost:8001/.
 

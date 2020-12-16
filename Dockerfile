@@ -7,21 +7,19 @@ ENV PYTHONUNBUFFERED 1
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get -y upgrade \
-    && apt-get install -y locales ca-certificates wget gnupg && apt-get clean
+    && apt-get install -y locales ca-certificates wget gnupg
 RUN sed -i 's/^# en_US.UTF-8 /en_US.UTF-8 /' /etc/locale.gen && locale-gen
 ENV LC_CTYPE=en_US.UTF-8
 
 RUN echo "deb https://packagecloud.io/timescale/timescaledb/debian buster main" \
     >/etc/apt/sources.list.d/timescaledb.list \
     && wget --quiet -O - https://packagecloud.io/timescale/timescaledb/gpgkey \
-        | apt-key add - \
-    && apt-get update
+        | apt-key add -
 
 RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
-RUN sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list' \
-    && apt-get -y update
+RUN sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
 
-RUN apt-get install -y --no-install-recommends \
+RUN apt-get -y update && apt-get install -y --no-install-recommends \
         git wget build-essential dos2unix less nano vim curl unzip \
         virtualenv python3-virtualenv python3-pip python3-ipython \
         postgresql-postgis postgresql-postgis-scripts \
@@ -30,7 +28,11 @@ RUN apt-get install -y --no-install-recommends \
         python3-dev libjpeg-dev libfreetype6-dev \
         tmux apache2 google-chrome-stable cgi-mapserver \
         tightvncserver lxde xfonts-base xfonts-75dpi xfonts-100dpi \
+        npm \
     && apt-get clean
+
+# Replace Debian's too old npm with a newer one
+RUN npm install -g npm@6.14.9
 
 # install chromedriver
 RUN wget -O /tmp/chromedriver.zip http://chromedriver.storage.googleapis.com/`curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE`/chromedriver_linux64.zip

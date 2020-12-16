@@ -52,8 +52,10 @@ runtests() {
     for dir in /opt/enhydris*; do
         ( cd $dir && find . -prune -name '*.py' -o -type d | xargs isort --check-only --diff ) || return
     done
+    ( cd /opt/enhydris && npm run lint ) || return
     python /opt/enhydris/manage.py makemigrations --check || return
-    python /opt/enhydris/manage.py test enhydris enhydris_openhigis enhydris_synoptic enhydris_autoprocess --failfast
+    python /opt/enhydris/manage.py test enhydris enhydris_openhigis enhydris_synoptic enhydris_autoprocess --failfast || return
+    ( cd /opt/enhydris && npm run test ) || return
 }
 
 runsynoptic() {
