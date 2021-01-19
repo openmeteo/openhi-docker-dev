@@ -18,7 +18,8 @@ DATABASES = {
         "PORT": 5432,
     }
 }
-ENHYDRIS_TIMESERIES_DATA_DIR = "/var/opt/enhydris/timeseries_data"
+MEDIA_ROOT = "/var/opt/enhydris/openmeteo/media"
+MEDIA_URL = "/media/"
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000
 ENHYDRIS_DISPLAY_COPYRIGHT_INFO = True
 ENHYDRIS_USERS_CAN_ADD_CONTENT = True

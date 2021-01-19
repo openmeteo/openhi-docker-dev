@@ -43,6 +43,8 @@ dbimport() {
 		CREATE INDEX enhydris_timeseriesrecord_timestamp_timeseries_id_idx
 		ON enhydris_timeseriesrecord("timestamp", timeseries_id);
 	EOF1
+        mkdir -p /var/opt/enhydris/openmeteo
+        mv /tmp/media /var/opt/enhydris/openmeteo/media
 	rm /tmp/openmeteo.dump
 }
 
