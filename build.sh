@@ -29,4 +29,6 @@ fi
 docker build \
     -t enhydris-dev \
     --build-arg apt_proxy_line="`get_apt_proxy_line`" \
+    --build-arg USER_ID=`id -u` \
+    --build-arg GROUP_ID=`id -g` \
     .

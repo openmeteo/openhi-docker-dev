@@ -1,4 +1,4 @@
-export PATH=/home/foo/venv/bin:$PATH
+export PATH=/home/enhydris/venv/bin:$PATH
 export PYTHONPATH=/opt/enhydris-openhigis:/opt/enhydris-synoptic:/opt/enhydris-autoprocess
 export DISPLAY=:1.0
 
@@ -6,17 +6,16 @@ dbimport() {
 	tar xzf /shared/dbdump.tar.gz -C /tmp || return;
 	for user in openmeteo anton mapserver;
 	do
-		sql="psql --command \"CREATE USER $user WITH SUPERUSER PASSWORD 'topsecret'\""
-		su postgres -c "$sql" || true
+		sudo -u postgres psql --command "CREATE USER $user WITH SUPERUSER PASSWORD 'topsecret'" || true
 	done;
-	su postgres -c "dropdb openmeteo" || true
-	su postgres -c "createdb -O openmeteo openmeteo"
-	su postgres -c 'psql -d openmeteo' <<- EOF1
+	sudo -u postgres dropdb openmeteo || true
+	sudo -u postgres createdb -O openmeteo openmeteo
+	sudo -u postgres psql -d openmeteo <<- EOF1
 		CREATE EXTENSION IF NOT EXISTS postgis;
 		CREATE EXTENSION IF NOT EXISTS timescaledb CASCADE;
 	EOF1
-	su postgres -c 'pg_restore -d openmeteo /tmp/openmeteo.dump';
-	su postgres -c 'psql -d openmeteo' <<- EOF1
+	sudo -u postgres pg_restore -d openmeteo /tmp/openmeteo.dump
+	sudo -u postgres psql -d openmeteo <<- EOF1
 		CREATE TABLE enhydris_timeseriesrecord (
 		    timeseries_id INTEGER NOT NULL,
 		    "timestamp" TIMESTAMP WITH TIME ZONE NOT NULL,
@@ -43,7 +42,8 @@ dbimport() {
 		CREATE INDEX enhydris_timeseriesrecord_timestamp_timeseries_id_idx
 		ON enhydris_timeseriesrecord("timestamp", timeseries_id);
 	EOF1
-        mkdir -p /var/opt/enhydris/openmeteo
+        sudo mkdir -p /var/opt/enhydris/openmeteo
+        sudo chown enhydris:enhydris /var/opt/enhydris/openmeteo
         rm -rf /var/opt/enhydris/openmeteo/media
         mv /tmp/media /var/opt/enhydris/openmeteo/media
 	rm /tmp/openmeteo.dump

@@ -1,8 +1,8 @@
 #!/bin/bash
 
-service apache2 start
-service postgresql start
-service rabbitmq-server start
+sudo service apache2 start
+sudo service postgresql start
+sudo service rabbitmq-server start
 ( echo "Starting VNC server..."; USER=root vncserver :1 -geometry 1280x800 -depth 24 ) &
 sleep 2
 cd /opt/enhydris
@@ -16,6 +16,6 @@ echo " - 'celery worker -A enhydris -l info --concurrency=1' to run the celery w
 echo " - 'exit' to stop the container"
 bash
 echo "Killing VNC server..."; killall Xtightvnc
-service rabbitmq-server stop
-service postgresql stop
-service apache2 stop
+sudo service rabbitmq-server stop
+sudo service postgresql stop
+sudo service apache2 stop

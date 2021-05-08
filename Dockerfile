@@ -1,5 +1,7 @@
 FROM debian:buster-slim
 ARG apt_proxy_line=''
+ARG USER_ID=65534
+ARG GROUP_ID=65534
 RUN echo $apt_proxy_line >/etc/apt/apt.conf.d/02proxy
 ADD VERSION .
 ENV PYTHONDONTWRITEBYTECODE 1
@@ -28,8 +30,11 @@ RUN apt-get -y update && apt-get install -y --no-install-recommends \
         python3-dev libjpeg-dev libfreetype6-dev \
         tmux apache2 google-chrome-stable cgi-mapserver \
         tightvncserver lxde xfonts-base xfonts-75dpi xfonts-100dpi \
-        npm gettext psmisc \
+        npm gettext psmisc sudo \
     && apt-get clean
+
+RUN echo "shared_preload_libraries = 'timescaledb'" \
+    >>/etc/postgresql/11/main/postgresql.conf
 
 # Replace Debian's too old npm with a newer one
 RUN npm install -g npm@6.14.9
@@ -37,43 +42,6 @@ RUN npm install -g npm@6.14.9
 # install chromedriver
 RUN wget -O /tmp/chromedriver.zip http://chromedriver.storage.googleapis.com/`curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE`/chromedriver_linux64.zip
 RUN unzip /tmp/chromedriver.zip chromedriver -d /usr/local/bin/
-
-RUN echo "shared_preload_libraries = 'timescaledb'" \
-    >>/etc/postgresql/11/main/postgresql.conf
-
-WORKDIR /root/
-
-RUN mkdir -p /root/.vnc
-COPY xstartup /root/.vnc/
-RUN chmod a+x /root/.vnc/xstartup
-RUN touch /root/.vnc/passwd
-RUN /bin/bash -c "echo -e 'topsecret\ntopsecret\nn' | vncpasswd" > /root/.vnc/passwd
-RUN chmod 400 /root/.vnc/passwd
-RUN chmod go-rwx /root/.vnc
-RUN touch /root/.Xauthority
-
-WORKDIR /home/foo/
-
-RUN virtualenv --python=/usr/bin/python3 --system-site-packages  /home/foo/venv
-RUN /home/foo/venv/bin/pip install --upgrade pip==19.2.2
-RUN /home/foo/venv/bin/pip install selenium
-COPY enhydris/requirements.txt requirements-enhydris.txt
-COPY enhydris/requirements-dev.txt requirements-enhydris-dev.txt
-COPY enhydris-openhigis/requirements.txt requirements-enhydris-openhigis.txt
-COPY enhydris-openhigis/requirements-dev.txt requirements-enhydris-openhigis-dev.txt
-COPY enhydris-synoptic/requirements.txt requirements-enhydris-synoptic.txt
-COPY enhydris-synoptic/requirements-dev.txt requirements-enhydris-synoptic-dev.txt
-COPY enhydris-autoprocess/requirements.txt requirements-enhydris-autoprocess.txt
-COPY enhydris-autoprocess/requirements-dev.txt requirements-enhydris-autoprocess-dev.txt
-RUN /home/foo/venv/bin/pip install --no-cache-dir -r requirements-enhydris.txt
-RUN /home/foo/venv/bin/pip install --no-cache-dir -r requirements-enhydris-openhigis.txt
-RUN /home/foo/venv/bin/pip install --no-cache-dir -r requirements-enhydris-synoptic.txt
-RUN /home/foo/venv/bin/pip install --no-cache-dir -r requirements-enhydris-autoprocess.txt
-RUN /home/foo/venv/bin/pip install --no-cache-dir -r requirements-enhydris-dev.txt
-RUN /home/foo/venv/bin/pip install --no-cache-dir -r requirements-enhydris-openhigis-dev.txt
-RUN /home/foo/venv/bin/pip install --no-cache-dir -r requirements-enhydris-synoptic-dev.txt
-RUN /home/foo/venv/bin/pip install --no-cache-dir -r requirements-enhydris-autoprocess-dev.txt
-RUN /home/foo/venv/bin/pip install --no-cache-dir isort flake8 black pdbpp
 
 COPY apache.conf /etc/apache2/sites-available/000-default.conf
 RUN echo "ServerName enhydris.local" >>/etc/apache2/apache2.conf
@@ -92,16 +60,52 @@ RUN echo "listen_addresses='*'" >> /etc/postgresql/11/main/postgresql.conf
 EXPOSE 5432
 EXPOSE 8000
 EXPOSE 5901
-ENV USER root
 
 RUN echo "mycontainer" > /etc/hostname
 RUN echo "127.0.0.1	localhost" > /etc/hosts
 RUN echo "127.0.0.1	mycontainer" >> /etc/hosts
 
+RUN addgroup --gid $GROUP_ID enhydris
+RUN adduser --uid $USER_ID --gid $GROUP_ID --disabled-password --gecos "" enhydris
+RUN usermod -G sudo enhydris
+RUN sed -i 's/%sudo.*/%sudo	ALL=(ALL:ALL) NOPASSWD:ALL/' /etc/sudoers
+WORKDIR /home/enhydris
+USER enhydris
+
+RUN virtualenv --python=/usr/bin/python3 --system-site-packages  /home/enhydris/venv
+RUN /home/enhydris/venv/bin/pip install --upgrade pip==19.2.2
+RUN /home/enhydris/venv/bin/pip install selenium
+COPY enhydris/requirements.txt requirements-enhydris.txt
+COPY enhydris/requirements-dev.txt requirements-enhydris-dev.txt
+COPY enhydris-openhigis/requirements.txt requirements-enhydris-openhigis.txt
+COPY enhydris-openhigis/requirements-dev.txt requirements-enhydris-openhigis-dev.txt
+COPY enhydris-synoptic/requirements.txt requirements-enhydris-synoptic.txt
+COPY enhydris-synoptic/requirements-dev.txt requirements-enhydris-synoptic-dev.txt
+COPY enhydris-autoprocess/requirements.txt requirements-enhydris-autoprocess.txt
+COPY enhydris-autoprocess/requirements-dev.txt requirements-enhydris-autoprocess-dev.txt
+RUN /home/enhydris/venv/bin/pip install --no-cache-dir -r requirements-enhydris.txt
+RUN /home/enhydris/venv/bin/pip install --no-cache-dir -r requirements-enhydris-openhigis.txt
+RUN /home/enhydris/venv/bin/pip install --no-cache-dir -r requirements-enhydris-synoptic.txt
+RUN /home/enhydris/venv/bin/pip install --no-cache-dir -r requirements-enhydris-autoprocess.txt
+RUN /home/enhydris/venv/bin/pip install --no-cache-dir -r requirements-enhydris-dev.txt
+RUN /home/enhydris/venv/bin/pip install --no-cache-dir -r requirements-enhydris-openhigis-dev.txt
+RUN /home/enhydris/venv/bin/pip install --no-cache-dir -r requirements-enhydris-synoptic-dev.txt
+RUN /home/enhydris/venv/bin/pip install --no-cache-dir -r requirements-enhydris-autoprocess-dev.txt
+RUN /home/enhydris/venv/bin/pip install --no-cache-dir isort flake8 black pdbpp
+
+RUN mkdir -p .vnc
+COPY --chown=enhydris:enhydris xstartup .vnc/
+RUN chmod a+x .vnc/xstartup
+RUN touch .vnc/passwd
+RUN /bin/bash -c "echo -e 'topsecret\ntopsecret\nn' | vncpasswd" > .vnc/passwd
+RUN chmod 400 .vnc/passwd
+RUN chmod go-rwx .vnc
+RUN touch .Xauthority
+
 # Copy shell scripts. If cloned on Windows, they might have CRLF line endings.
 # We make sure they have Unix-style line endings, otherwise they can't execute.
-ADD start.sh /home/foo
-ADD bashrc /root/.bashrc
-RUN dos2unix /home/foo/start.sh /root/.bashrc
+COPY --chown=enhydris:enhydris start.sh /home/enhydris
+COPY --chown=enhydris:enhydris bashrc /home/enhydris/.bashrc
+RUN dos2unix /home/enhydris/start.sh /home/enhydris/.bashrc
 
-CMD ["/home/foo/start.sh"]
+CMD ["/home/enhydris/start.sh"]
