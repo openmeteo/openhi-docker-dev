@@ -75,6 +75,7 @@ USER enhydris
 RUN virtualenv --python=/usr/bin/python3 --system-site-packages  /home/enhydris/venv
 RUN /home/enhydris/venv/bin/pip install --upgrade pip==19.2.2
 RUN /home/enhydris/venv/bin/pip install selenium
+RUN /home/enhydris/venv/bin/pip install django-cors-headers
 COPY enhydris/requirements.txt requirements-enhydris.txt
 COPY enhydris/requirements-dev.txt requirements-enhydris-dev.txt
 COPY enhydris-openhigis/requirements.txt requirements-enhydris-openhigis.txt

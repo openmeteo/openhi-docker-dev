@@ -26,6 +26,10 @@ ENHYDRIS_USERS_CAN_ADD_CONTENT = True
 ENHYDRIS_OPEN_CONTENT = True
 LANGUAGE_CODE = "en"
 
+INSTALLED_APPS.append("corsheaders")
+MIDDLEWARE.insert(2, "corsheaders.middleware.CorsMiddleware")
+CORS_ALLOW_ALL_ORIGINS = True
+
 INSTALLED_APPS.insert(0, "enhydris_openhigis")
 ROOT_URLCONF = "enhydris_project.settings.urls"
 ENHYDRIS_OWS_URL = (
