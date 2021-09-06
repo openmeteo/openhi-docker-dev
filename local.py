@@ -33,8 +33,7 @@ CORS_ALLOW_ALL_ORIGINS = True
 INSTALLED_APPS.insert(0, "enhydris_openhigis")
 ROOT_URLCONF = "enhydris_project.settings.urls"
 ENHYDRIS_OWS_URL = (
-    "http://localhost:8001/cgi-bin/mapserv?"
-    "map=/opt/enhydris-openhigis/mapserver/openhigis.map&"
+    "http://localhost:8001/cgi-bin/mapserv?map=/opt/enhydris-openhigis/mapserver/"
 )
 
 INSTALLED_APPS.append("enhydris_synoptic")
