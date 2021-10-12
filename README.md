@@ -25,7 +25,13 @@ Ready-made Enhydris development environment
 4. Get a database dump file named `dbdump.tar.gz` and put it in the
    `shared` directory.
 
-5. (Windows/Vagrant only). `vagrant up`, then `vagrant ssh`.
+5. (Windows/Vagrant only).
+
+   ```
+   vagrant up
+   vagrant ssh
+   cd /vagrant
+   ```
 
    (Note: We haven't had success trying to run Docker on Windows, and
    how it will turn out depends on the operating system version and
