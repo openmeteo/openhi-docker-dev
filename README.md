@@ -48,9 +48,12 @@ Ready-made Enhydris development environment
 9. `python manage.py migrate` will ensure the database is up-to-date (the
    database import file could be slightly out of date).
 
-10. In the container, `runserver` will start the server.
+10. In the container, `npm install` will install npm packages needed for
+    the tests.
 
-11. In your browser, visit http://localhost:8001/.
+11. In the container, `runserver` will start the server.
+
+12. In your browser, visit http://localhost:8001/.
 
 ## Running the unit tests in a visible browser
 
