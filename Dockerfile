@@ -33,6 +33,10 @@ RUN apt-get -y update && apt-get install -y --no-install-recommends \
         npm gettext psmisc sudo python3-tblib \
     && apt-get clean
 
+# Make PostgreSQL way faster, at the expense of it being corruptible
+RUN echo "fsync = off" >>/etc/postgresql/13/main/postgresql.conf
+RUN echo "full_page_writes = off" >>/etc/postgresql/13/main/postgresql.conf
+
 RUN echo "shared_preload_libraries = 'timescaledb'" \
     >>/etc/postgresql/13/main/postgresql.conf
 
