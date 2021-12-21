@@ -30,7 +30,7 @@ RUN apt-get -y update && apt-get install -y --no-install-recommends \
         python3-dev libjpeg-dev libfreetype6-dev \
         tmux apache2 google-chrome-stable cgi-mapserver \
         tightvncserver lxde xfonts-base xfonts-75dpi xfonts-100dpi \
-        npm gettext psmisc sudo \
+        npm gettext psmisc sudo python3-tblib \
     && apt-get clean
 
 RUN echo "shared_preload_libraries = 'timescaledb'" \

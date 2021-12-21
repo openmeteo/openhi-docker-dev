@@ -57,7 +57,7 @@ runtests() {
     done
     ( cd /opt/enhydris && npm run lint ) || return
     python /opt/enhydris/manage.py makemigrations --check || return
-    python /opt/enhydris/manage.py test enhydris enhydris_openhigis enhydris_synoptic enhydris_autoprocess --failfast || return
+    python /opt/enhydris/manage.py test enhydris enhydris_openhigis enhydris_synoptic enhydris_autoprocess --parallel=`nproc` --failfast || return
     ( cd /opt/enhydris && npm run test ) || return
 }
 
