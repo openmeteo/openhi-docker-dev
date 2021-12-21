@@ -1,6 +1,5 @@
 # flake8: NOQA
 from celery.schedules import crontab
-
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options as ChromeOptions
 
@@ -35,6 +34,7 @@ ROOT_URLCONF = "enhydris_project.settings.urls"
 ENHYDRIS_OWS_URL = (
     "http://localhost:8001/cgi-bin/mapserv?map=/opt/enhydris-openhigis/mapserver/"
 )
+MIDDLEWARE.append("enhydris_openhigis.middleware.OpenHiGISMiddleware")
 
 INSTALLED_APPS.append("enhydris_synoptic")
 ENHYDRIS_SYNOPTIC_ROOT = "/tmp/enhydris-synoptic-root"
