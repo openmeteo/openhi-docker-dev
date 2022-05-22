@@ -27,7 +27,7 @@ RUN apt-get -y update && apt-get install -y --no-install-recommends \
         postgresql-postgis postgresql-postgis-scripts \
         timescaledb-2-postgresql-13 rabbitmq-server \
         python3-psycopg2 python3-gdal python3-pandas python3-matplotlib \
-        python3-dev libjpeg-dev libfreetype6-dev \
+        python3-requests python3-dev libjpeg-dev libfreetype6-dev \
         tmux apache2 google-chrome-stable cgi-mapserver \
         tightvncserver lxde xfonts-base xfonts-75dpi xfonts-100dpi \
         npm gettext psmisc sudo python3-tblib \
