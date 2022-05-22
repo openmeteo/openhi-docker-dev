@@ -73,6 +73,11 @@ RUN addgroup --gid $GROUP_ID enhydris
 RUN adduser --uid $USER_ID --gid $GROUP_ID --disabled-password --gecos "" enhydris
 RUN usermod -G sudo enhydris
 RUN sed -i 's/%sudo.*/%sudo	ALL=(ALL:ALL) NOPASSWD:ALL/' /etc/sudoers
+
+# Django cache
+RUN mkdir -p /var/cache/enhydris/django_cache
+RUN chown enhydris:enhydris /var/cache/enhydris/django_cache
+
 WORKDIR /home/enhydris
 USER enhydris
 

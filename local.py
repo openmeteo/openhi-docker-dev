@@ -25,6 +25,13 @@ ENHYDRIS_USERS_CAN_ADD_CONTENT = True
 ENHYDRIS_OPEN_CONTENT = True
 LANGUAGE_CODE = "en"
 
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION': '/var/cache/enhydris/django_cache',
+    },
+}
+
 INSTALLED_APPS.append("corsheaders")
 MIDDLEWARE.insert(2, "corsheaders.middleware.CorsMiddleware")
 CORS_ALLOW_ALL_ORIGINS = True
