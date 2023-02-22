@@ -1,4 +1,4 @@
-FROM debian:bullseye-slim
+FROM --platform=linux/amd64 debian:bullseye-slim
 ARG apt_proxy_line=''
 ARG USER_ID=65534
 ARG GROUP_ID=65534
@@ -66,11 +66,9 @@ EXPOSE 8000
 EXPOSE 5901
 
 RUN echo "mycontainer" > /etc/hostname
-RUN echo "127.0.0.1	localhost" > /etc/hosts
-RUN echo "127.0.0.1	mycontainer" >> /etc/hosts
 
-RUN addgroup --gid $GROUP_ID enhydris
-RUN adduser --uid $USER_ID --gid $GROUP_ID --disabled-password --gecos "" enhydris
+RUN groupadd -o --gid $GROUP_ID enhydris
+RUN adduser --uid $USER_ID --gid $GROUP_ID --gecos "" enhydris
 RUN usermod -G sudo enhydris
 RUN sed -i 's/%sudo.*/%sudo	ALL=(ALL:ALL) NOPASSWD:ALL/' /etc/sudoers
 
