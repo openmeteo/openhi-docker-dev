@@ -6,6 +6,7 @@ Ready-made Enhydris development environment
 
 - On Windows: VirtualBox
 - Linux: Docker
+- Mac: Docker
 
 ## Setting up
 
@@ -46,7 +47,9 @@ Ready-made Enhydris development environment
 8. Once in the container, `dbimport` will import the database.
 
 9. `python manage.py migrate` will ensure the database is up-to-date (the
-   database import file could be slightly out of date).
+   database import file could be slightly out of date). If some of the migrations
+   failed due to existing tables that are already created by the `dbimport` command,
+   `python manage.py migrate --fake-initial` will mark the migrations as applied.
 
 10. In the container, `npm install` will install npm packages needed for
     the tests.

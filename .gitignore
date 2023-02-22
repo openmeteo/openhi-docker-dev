@@ -1,6 +1,7 @@
 shared
 !shared/KEEP
 .vagrant/
+.DS_Store
 enhydris
 enhydris-autoprocess
 enhydris-synoptic
