@@ -49,7 +49,8 @@ Ready-made Enhydris development environment
    database import file could be slightly out of date).
 
 10. In the container, `npm install` will install npm packages needed for
-    the tests.
+    the tests. (NOTE: On Windows you have to enter `sudo npm install`
+    instead, because of https://github.com/docker/for-win/issues/2476.)
 
 11. In the container, `runserver` will start the server.
 
