@@ -66,8 +66,6 @@ EXPOSE 8000
 EXPOSE 5901
 
 RUN echo "mycontainer" > /etc/hostname
-RUN echo "127.0.0.1	localhost" > /etc/hosts
-RUN echo "127.0.0.1	mycontainer" >> /etc/hosts
 
 RUN addgroup --gid $GROUP_ID enhydris
 RUN adduser --uid $USER_ID --gid $GROUP_ID --disabled-password --gecos "" enhydris
