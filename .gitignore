@@ -1,6 +1,5 @@
 shared
 !shared/KEEP
-.vagrant/
 enhydris
 enhydris-autoprocess
 enhydris-synoptic

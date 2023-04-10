@@ -25,36 +25,22 @@ Ready-made Enhydris development environment
 4. Get a database dump file named `dbdump.tar.gz` and put it in the
    `shared` directory.
 
-5. (Windows/Vagrant only).
+5. `./build.sh` will build the image.
 
-   ```
-   vagrant up
-   vagrant ssh
-   cd /vagrant
-   ```
+6. `./run.sh` will create/start the container.
 
-   (Note: We haven't had success trying to run Docker on Windows, and
-   how it will turn out depends on the operating system version and
-   edition and on the hardware. We therefore use vagrant on VirtualBox
-   to create a Debian machine, and we run Docker inside the Debian
-   machine.)
+7. Once in the container, `dbimport` will import the database.
 
-6. `./build.sh` will build the image.
-
-7. `./run.sh` will create/start the container.
-
-8. Once in the container, `dbimport` will import the database.
-
-9. `python manage.py migrate` will ensure the database is up-to-date (the
+8. `python manage.py migrate` will ensure the database is up-to-date (the
    database import file could be slightly out of date).
 
-10. In the container, `npm install` will install npm packages needed for
-    the tests. (NOTE: On Windows you have to enter `sudo npm install`
-    instead, because of https://github.com/docker/for-win/issues/2476.)
+9. In the container, `npm install` will install npm packages needed for
+   the tests. (NOTE: On Windows you have to enter `sudo npm install`
+   instead, because of https://github.com/docker/for-win/issues/2476.)
 
-11. In the container, `runserver` will start the server.
+10. In the container, `runserver` will start the server.
 
-12. In your browser, visit http://localhost:8001/.
+11. In your browser, visit http://localhost:8001/.
 
 ## Running the unit tests in a visible browser
 
