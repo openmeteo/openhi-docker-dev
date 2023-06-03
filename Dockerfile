@@ -99,7 +99,7 @@ RUN /home/enhydris/venv/bin/pip install --no-cache-dir -r requirements-enhydris-
 RUN /home/enhydris/venv/bin/pip install --no-cache-dir -r requirements-enhydris-openhigis-dev.txt
 RUN /home/enhydris/venv/bin/pip install --no-cache-dir -r requirements-enhydris-synoptic-dev.txt
 RUN /home/enhydris/venv/bin/pip install --no-cache-dir -r requirements-enhydris-autoprocess-dev.txt
-RUN /home/enhydris/venv/bin/pip install --no-cache-dir isort flake8 black pdbpp
+RUN /home/enhydris/venv/bin/pip install --no-cache-dir isort flake8 'black<23' pdbpp
 
 RUN mkdir -p .vnc
 COPY --chown=enhydris:enhydris xstartup .vnc/
